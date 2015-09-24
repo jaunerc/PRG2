@@ -51,4 +51,9 @@ public class Account {
     public void print() {
         System.out.println("account - no: "+no+" - saldo: "+saldo+" - rate: "+rate);
     }
+    
+    @Override
+    public String toString() {
+        return "account - no: "+no+" - saldo: "+saldo+" - rate: "+rate;
+    }
 }
