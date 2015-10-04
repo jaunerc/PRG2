@@ -1,7 +1,7 @@
 /*
  * License header jaunerc
  */
-package ch.jaunerc.oop1_dat1;
+package ch.jaunerc.prg2.oop1_dat1;
 
 /**
  * This class represents a person. A person is defined by the name and first name.

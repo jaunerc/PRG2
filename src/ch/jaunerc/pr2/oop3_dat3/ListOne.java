@@ -1,7 +1,7 @@
 /*
  * License header jaunerc
  */
-package ch.jaunerc.oop3_dat3;
+package ch.jaunerc.pr2.oop3_dat3;
 
 import java.util.ArrayList;
 

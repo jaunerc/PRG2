@@ -3,6 +3,7 @@
  */
 package ch.jaunerc.oop2_dat2;
 
+import ch.jaunerc.prg2.oop2_dat2.RingBuffer;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;

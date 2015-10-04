@@ -3,6 +3,7 @@
  */
 package ch.jaunerc.oop2_dat2;
 
+import ch.jaunerc.prg2.oop2_dat2.DoubleLinkedList;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;

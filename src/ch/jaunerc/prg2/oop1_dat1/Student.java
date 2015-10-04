@@ -1,7 +1,7 @@
 /*
  * License header jaunerc
  */
-package ch.jaunerc.oop1_dat1;
+package ch.jaunerc.prg2.oop1_dat1;
 
 /**
  *
