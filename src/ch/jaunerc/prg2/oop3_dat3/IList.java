@@ -1,7 +1,7 @@
 /*
  * License header jaunerc
  */
-package ch.jaunerc.pr2.oop3_dat3;
+package ch.jaunerc.prg2.oop3_dat3;
 
 /**
  * Interface for list classes. It supports only Integers.

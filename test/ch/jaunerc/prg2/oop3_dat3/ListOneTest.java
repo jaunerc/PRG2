@@ -3,7 +3,6 @@
  */
 package ch.jaunerc.prg2.oop3_dat3;
 
-import ch.jaunerc.pr2.oop3_dat3.ListOne;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
