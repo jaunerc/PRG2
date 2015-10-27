@@ -80,7 +80,7 @@ public class LinkedList<T> {
         ListNode<T> prev = null;
         boolean res = false;
         
-        while((curr != null) && data.equals(curr.getData())) {
+        while((curr != null) && !data.equals(curr.getData())) {
             prev = curr;
             curr = curr.getNext();
         }

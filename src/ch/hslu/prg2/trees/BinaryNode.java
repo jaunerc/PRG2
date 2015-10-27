@@ -115,6 +115,14 @@ public class BinaryNode {
         }
     }
     
+    private void postorder(final BinaryNode v) {
+        if(v != null) {
+            postorder(v.left);
+            postorder(v.right);
+            visit(v);
+        }
+    }
+    
     private void visit(final BinaryNode n) {
         System.out.print(n.getKey()+" ");
     }

@@ -64,7 +64,7 @@ public class ListOne implements IList{
     public boolean exists(int i) {
         return (list.indexOf(i) != -1);
     }
-
+    
     @Override
     public void print() {
         System.out.println("listOne:");

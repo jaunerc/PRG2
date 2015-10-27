@@ -8,7 +8,6 @@ package ch.jaunerc.prg2.oop3_dat3;
  * @author jaunerc
  */
 public interface IList {
-    
     /**
      * Add an integer object to the list.
      * @param obj to add to the list
