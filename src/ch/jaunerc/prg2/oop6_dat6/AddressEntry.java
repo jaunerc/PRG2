@@ -43,7 +43,7 @@ public final class AddressEntry implements Comparable<AddressEntry>{
     }
 
     public void seteMail(String eMail) throws IllegalArgumentException {
-        if(eMail.contains("@")) {
+        if(!eMail.contains("@")) {
             throw new InvalidEmailAddressException("");
         }
         this.eMail = eMail;
