@@ -124,6 +124,7 @@ public class ChatServer {
         Socket client;
         String username;
         EasyProtocol handlerProtocol;
+        PrintWriter writer;
         boolean connected;
         
         public ClientHandler(Socket client) {
@@ -135,12 +136,12 @@ public class ChatServer {
         public void run() {
                try (
                     BufferedReader reader = new BufferedReader(new InputStreamReader(client.getInputStream()));
-                    PrintWriter writer = new PrintWriter(client.getOutputStream(), true)
                 ){
+                writer = new PrintWriter(client.getOutputStream(), true);
                 String received = reader.readLine();
                 MessagePacket packet = handlerProtocol.processTCP(received);
                 username = packet.getData();
-                System.out.println("Got username from client.");
+                System.out.println("Got username from client: "+packet.toString()+", from: "+packet.getFrom()+", to: "+packet.getTo()+", data: "+packet.getData());
                 MessagePacket send = handlerProtocol.processTCP();
                 writer.println(send.toString());
                 connected = true;
@@ -149,10 +150,24 @@ public class ChatServer {
                 while (connected) {
                     String input = reader.readLine();
                     System.out.println("Got some input: "+input);
+                    
+                    MessagePacket userMsg = handlerProtocol.processTCP(input);
+                    for(ClientHandler handler : clients) {
+                        System.out.println("handler: "+handler.username+" , MsgTo: "+userMsg.getTo());
+                        if(userMsg.getTo().equals(handler.username)) {
+                            System.out.println("User found: "+username);
+                            handler.send(userMsg.toString());
+                        }
+                    }
                 }
             } catch (Exception e) {
                 e.printStackTrace();
             }
+               writer.close();
+        }
+        
+        public void send(String msg) {
+            writer.println(msg);
         }
         
     }

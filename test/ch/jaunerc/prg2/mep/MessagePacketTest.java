@@ -24,7 +24,7 @@ public class MessagePacketTest {
         MessagePacket packet = new MessagePacket(from, to, data, marker);
         MessagePacket returned = null;
         try {
-            returned = MessagePacket.isCorrect(packet.toStringLine(), marker);
+            returned = MessagePacket.isCorrect(packet.toString(), marker);
         } catch (CorruptMessageException ex) {
             ex.printStackTrace();
         }

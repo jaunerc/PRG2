@@ -6,6 +6,10 @@ package ch.jaunerc.prg2.mep;
  */
 public class StartChatClient {
     public static void main(String[] args) {
-        ChatClient client = new ChatClient(1234, args[0]);
+        if(args.length != 0) {
+            ChatClient client = new ChatClient(1234, args[0]);
+        } else {
+            System.err.println("Usage java StartChatClient <username>");
+        }
     }
 }

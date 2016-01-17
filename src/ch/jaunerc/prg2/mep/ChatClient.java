@@ -60,7 +60,7 @@ public class ChatClient {
             Enumeration<NetworkInterface> eInterfaces = NetworkInterface.getNetworkInterfaces();
             while(eInterfaces.hasMoreElements()) {
                 NetworkInterface interf = eInterfaces.nextElement();
-                if(interf.isUp()) {
+                if(interf.isUp() && !interf.isLoopback()) {
                     for(InterfaceAddress addr : interf.getInterfaceAddresses()) {
                         InetAddress broadcast = addr.getBroadcast(); // Get the broadcast address of the subnet
                         if(broadcast != null) {
@@ -129,12 +129,18 @@ public class ChatClient {
         public void run() {
             Scanner scanner = new Scanner(System.in);
             try {
+                System.out.println("\nWrite the name of the recipient first and after that your message:");
                 writer = new PrintWriter(socket.getOutputStream(), true);
                 while (running) {
-                    String input = scanner.nextLine();
-                    // ToDo: Send routine
-                    writer.println(input);
-                    System.out.println("I send: "+input);
+                    String recipient = scanner.nextLine();
+                    String message = scanner.nextLine();
+                    
+                    try {
+                        MessagePacket packet = protocol.formatUserMessage(name, recipient, message);
+                        writer.println(packet.toString());
+                    } catch (CorruptMessageException cme) {
+                        System.out.println("Your message is not in the correct format. Try again!");
+                    }
                 }
                 writer.close();
             } catch (IOException ex) {
@@ -152,8 +158,9 @@ public class ChatClient {
                 reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                 
                 while(running) {
-                    String msg = reader.readLine(); // ToDo: Communication with protocol
-                    System.out.println("Got a message: "+msg);
+                    String input = reader.readLine(); // ToDo: Communication with protocol
+                    MessagePacket packet = protocol.processTCP(input);
+                    System.out.println("Message from: "+packet.getFrom()+": \n"+packet.getData());
                 }
                 reader.close();
             } catch (Exception e) {
