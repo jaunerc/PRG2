@@ -52,6 +52,7 @@ public class EasyProtocol {
         String output = null;
         
         switch(stateUDP) {
+            // Client state
             case LOOKINGFORSERVER:
                 output = DISCOVER;
                 stateUDP = ProtocolState.WATINGFORSERVERRESPONSE;
@@ -63,6 +64,8 @@ public class EasyProtocol {
                     throw new FalseAnswerException(UDPSERVERRESPONSE, input);
                 }
                 break;
+                
+            // Server state
             case WAITINGFORCLIENTS:
                 if(input.equalsIgnoreCase(DISCOVER)) {
                     output = UDPSERVERRESPONSE;
@@ -91,6 +94,7 @@ public class EasyProtocol {
         MessagePacket packet = null;
         
         switch(stateTCP) {
+            // Client states
             case LOOKINGFORSERVER:
                 packet = new MessagePacket(input);
                 stateTCP = ProtocolState.INFOSENT;
@@ -105,6 +109,8 @@ public class EasyProtocol {
             case CLIENTCONNECTED:
                 packet = MessagePacket.isCorrect(input, MARKER);
                 break;
+                
+            // Server states
             case WAITINGFORCLIENTS:
                 switch(input) {
                     case ECHO:

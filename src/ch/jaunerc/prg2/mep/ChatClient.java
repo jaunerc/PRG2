@@ -1,13 +1,9 @@
 package ch.jaunerc.prg2.mep;
 
 import java.io.BufferedReader;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
-import java.io.Reader;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
@@ -16,8 +12,6 @@ import java.net.NetworkInterface;
 import java.net.Socket;
 import java.util.Enumeration;
 import java.util.Scanner;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * This class provides a simple ChatClient.
@@ -49,24 +43,25 @@ public class ChatClient {
     }
     
     /**
-     * Looking for servers in all available subnets.
+     * Looking for servers in all available subnets. The loopback interface will be skipped.
+     * to discober the networks, this method sends udp broadcasts.
      */
     private InetAddress discoverServer() {
         InetAddress serverAddress = null;
         try (DatagramSocket dSocket = new DatagramSocket()){
             dSocket.setBroadcast(true);
-            byte[] send = (protocol.processUDP()).getBytes(); // Get the discover message from the protocol
+            byte[] broadcastMsg = (protocol.processUDP()).getBytes(); // Get the discover message from the protocol
             
             Enumeration<NetworkInterface> eInterfaces = NetworkInterface.getNetworkInterfaces();
             while(eInterfaces.hasMoreElements()) {
                 NetworkInterface interf = eInterfaces.nextElement();
                 if(interf.isUp() && !interf.isLoopback()) {
                     for(InterfaceAddress addr : interf.getInterfaceAddresses()) {
-                        InetAddress broadcast = addr.getBroadcast(); // Get the broadcast address of the subnet
-                        if(broadcast != null) {
-                            DatagramPacket packet = new DatagramPacket(send, send.length, broadcast, destPort);
+                        InetAddress broadcastAdr = addr.getBroadcast(); // Get the broadcast address of the subnet
+                        if(broadcastAdr != null) {
+                            DatagramPacket packet = new DatagramPacket(broadcastMsg, broadcastMsg.length, broadcastAdr, destPort);
                             dSocket.send(packet);
-                            System.out.println("Packet sent to "+broadcast.getHostName());
+                            System.out.println("Packet sent to "+broadcastAdr.getHostName());
                         }
                     }
                 }
@@ -88,6 +83,12 @@ public class ChatClient {
         return serverAddress;
     }
     
+    /**
+     * Proove the data of a udp answer packet with the protocol. It returns true, if the data is correct
+     * otherwise false.
+     * @param msg data of the udp packet.
+     * @return wheter the data is correct or not.
+     */
     private boolean prooveServerResponse(String msg) {
         boolean correct = false;
         try {
@@ -99,6 +100,13 @@ public class ChatClient {
         return correct;
     }
     
+    /**
+     * Start routine for the chat client to create a session with the given serveraddress. This method creates and starts two
+     * runnable-objects UserInputHandler and Listener.
+     * @param serverAddress to connect with.
+     * @throws IOException the stream could not be opened.
+     * @throws CorruptMessageException the signIn was not successfull.
+     */
     private void startChat(InetAddress serverAddress) throws IOException, CorruptMessageException {
         socket = new Socket(serverAddress, destPort);
         signIn();
@@ -110,6 +118,11 @@ public class ChatClient {
         listener.start();
     }
     
+    /**
+     * Try to signin to the server that is connected with the socket field.
+     * @throws IOException the stream could not be opened.
+     * @throws CorruptMessageException the signIn was not successfull.
+     */
     private void signIn() throws IOException, CorruptMessageException {
         PrintWriter writer = new PrintWriter(socket.getOutputStream(), true);
         BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
@@ -123,6 +136,9 @@ public class ChatClient {
         System.out.println("Successfully connected with server.");
     }
     
+    /**
+     * This class provides a thread to read user input. It creates a PrintWriter to write to the socket field stream.
+     */
     private class UserInputHandler implements Runnable {
         PrintWriter writer;
         @Override
@@ -149,6 +165,10 @@ public class ChatClient {
         }
     }
     
+    /**
+     * This class provides a thread to read the socket field input stream. It writes the readed data to the console
+     * output stream.
+     */
     private class Listener implements Runnable {
         BufferedReader reader;
         
@@ -158,7 +178,7 @@ public class ChatClient {
                 reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                 
                 while(running) {
-                    String input = reader.readLine(); // ToDo: Communication with protocol
+                    String input = reader.readLine();
                     MessagePacket packet = protocol.processTCP(input);
                     System.out.println("Message from: "+packet.getFrom()+": \n"+packet.getData());
                 }
